@@ -143,6 +143,13 @@
     
     <script>
       const appState = {};
+      appState.items = itemsinCart;
+      appState.country = buyerCountry;
+      
+      appState.bill = itemsInCart.reduce((total, {price, qty})=>{
+        return total + (price * qty)
+      })
+      
       
       const formatAsMoney = (amount, buyerCountry)=>{
         
@@ -165,6 +172,8 @@
       };
       
       const displayCartTotal = ({results})=> {
+        const [data] = results
+        const {itemsInCart, buyerCountry} = data;
         
       };
       
@@ -175,6 +184,7 @@
         .then (data => displayCartTotal(data))
         .catch ( err => console.log(err))
       };
+      
       
       const supportedCards = {
         visa, mastercard
