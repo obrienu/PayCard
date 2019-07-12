@@ -147,12 +147,24 @@
       appState.country = buyerCountry;
       
       appState.bill = itemsInCart.reduce((total, {price, qty})=>{
-        return total + (price * qty)
+        return total + (price * qty);
       })
       
       
       const formatAsMoney = (amount, buyerCountry)=>{
+        buyerCountry.toLocaleString();
         
+        const getBuyersCountryInfo = (country)=> {
+          country.country === buyerCountry
+        }
+        
+        const countryInfo = countries.filter(getBuyersCountryInfo)
+        
+        if (countryInfo.lenght === 0) {
+          return `USD${amount.toLocaleString()}`
+        }else{
+          return `${countryInfo[0].currency}${amount.toLocaleString()}`
+        }
       }
       
       const detectCardType = ({target})=>{
