@@ -143,13 +143,7 @@
     
     <script>
       const appState = {};
-      appState.items = itemsinCart;
-      appState.country = buyerCountry;
-      
-      appState.bill = itemsInCart.reduce((total, {price, qty})=>{
-        return total + (price * qty);
-      })
-      
+   
       
       const formatAsMoney = (amount, buyerCountry)=>{
         buyerCountry.toLocaleString();
@@ -179,6 +173,10 @@
         
       };
       
+      const validateCardNumber = ()=> {
+        
+      };
+      
       const uiCanInteract = ()=>{
         
       };
@@ -186,7 +184,16 @@
       const displayCartTotal = ({results})=> {
         const [data] = results
         const {itemsInCart, buyerCountry} = data;
+        appState.items = itemsInCart;
+        appState.country = buyerCountry;
+        appState.bill = itemsInCart.reduce((total, {price, qty})=>{
+          return total + (price * qty);
+        });
+        appState.billFormated = formatAsMoney(this.bill, this.country);
         
+        let cartTotalDisplay = document.querySelector('span[data-bill]');
+        cartTotalDisplay.textContent = appState.billFormated;
+        uiCanInteract();
       };
       
       const fetchBill = ()=>{
