@@ -207,7 +207,18 @@
       };
       
       const uiCanInteract = ()=>{
+        const cardDigit = document.querySelector('div[data-cc-digits] input:first-				child');
+        cardDigit.addEventListener("blur", detectCardType);
+        cardDigit.focus();
         
+        const holdersName = document.querySelector('div[data-cc-info] input:first-				child');
+        holdersName.addEventListener("blur", validateCardHolderName);
+        
+        const cardExpiry = document.querySelector('div[data-cc-info] input:nth-					child(2)');
+        cardExpiry.addEventListener("blur", validateCardExpiryDate);
+        
+        const button = document.querySelector('button[data-pay-btn]');
+        button.addEventListener("click", validateCardNumber);
       };
       
       const displayCartTotal = ({results})=> {
