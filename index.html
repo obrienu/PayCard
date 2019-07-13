@@ -178,11 +178,28 @@
       };
       
       const validateCardExpiryDate = ({target}) => {
-        
+        if(expiryDateFormatIsValid({target})){
+        const entry = target[0].split("/");
+        const mm = parseInt(entry[0]);
+        let yy = parseInt(entry[1]);
+        let d = new Date();
+        let year = d.getFullYear();
+        let month = d.getMonth();
+       	let inFuture = (((mm <= month) && (yy > year)) ||
+                         ((mm > month) && (yy >= year)));
+        if( inFuture === true ){
+          return flagIfInvalid(target, Invalid)
+        }
+      }
       };
       
       const validateCardHolderName = ({target}) => {
-        
+        let inputName = target.split(" ");
+        let name = inputName[0];
+        let surName = inputName[1];
+        if(name.length >= 2 && surName.length >= 2 ){
+          return flagIfInvalid();
+        };
       };
       
       const validateCardNumber = ()=> {
@@ -198,12 +215,12 @@
         const {itemsInCart, buyerCountry} = data;
         appState.items = itemsInCart;
         appState.country = buyerCountry;
-        appState.bill = itemsInCart.reduce((total, {price, qty})=>{
-          return total + (price * qty);
+        appState.bill = itemsInCart.reduce((total, item)=>{
+          return total + (item.price * item.qty);
         });
         appState.billFormated = formatAsMoney(this.bill, this.country);
         
-        let cartTotalDisplay = document.querySelector('span[data-bill]');
+        const cartTotalDisplay = document.querySelector('[data-bill]');
         cartTotalDisplay.textContent = appState.billFormated;
         uiCanInteract();
       };
