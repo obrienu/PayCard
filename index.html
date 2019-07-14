@@ -163,9 +163,9 @@
       
       const flagIfInvalid = (field, isValid)=>{
         if(isValid === true){
-          field.classList.remove('is-invalid')
+          return field.classList.remove('is-invalid')
         }else{
-          field.classList.add('is-invalid')
+          return field.classList.add('is-invalid')
         }
       };
       
@@ -208,13 +208,62 @@
         let inputName = target.value.split(" ");
         let name = inputName[0];
         let surName = inputName[1];
-        if(name.length >= 2 && surName.length >= 2 ){
+        if(name.length >= 3 && surName.length >= 3 ){
           return flagIfInvalid();
         };
       };
       
-      const validateCardNumber = ()=> {
+      const validateWithLuhu = (digits) => {
+        let arrOfInputValue = [];
+        let cardValue = [];
+        let inputString;
+        let arrOfStringInput;
         
+        let i ;
+        let doubleValue ;
+        let firstRun = [];
+        let totalSumOfDigit ;
+        
+        for(i = 0; i < 4; i++){
+          cardValue.push(document.querySelector('div[data-cc-digits]').querySelectorAll('input')[i].value)
+        }
+        inputString = cardValue.reduce((total, item)=>{
+          return total + item
+        });
+        arrOfStringInput = inputString.split("")
+        arrOfStringInput.forEach((input)=>{
+          arrOfInputValue.push(parseInt(input))
+          console.log(arrOfInputValue)
+        });
+        
+        for(i = 1 ; i <= arrOfInputValue.length ; i++){
+          if (i % 2 !== 0){
+            doubleValue = (arrOfInputValue[i-1]) * 2
+            	if(doubleValue > 9) {
+            	firstRun.push(doubleValue - 9)
+                }else{
+                  firstRun.push(doubleValue)}
+                }else{
+                  firstRun.push(arrOfInputValue[i-1])
+                }
+        	}
+       
+        const sumOfDigit = (total, digit) => {
+          return total + digit
+        }
+        totalSumOfDigit = firstRun.reduce(sumOfDigit)
+        if((totalSumOfDigit % 10) === 0){
+          return true
+        }
+          
+      }
+      
+      const validateCardNumber = ()=> {
+        if(validateWithLuhu()) {
+          document.querySelector('div[data-cc-digits]').classList.remove('is-invald')
+        }else{
+          document.querySelector('div[data-cc-digits]').classList.add('is-invalid')
+        }
       };
       
       const uiCanInteract = ()=>{
@@ -315,6 +364,7 @@
       
       const startApp = () => {
      	fetchBill()
+        validateWithLuhu()
       };
 
       startApp();
