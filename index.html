@@ -169,9 +169,11 @@
         }
       };
       
-      const expiryDateFormatIsValid = (target)=>{
-        /^(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/.test(target);
-      }
+      const expiryDateFormatIsValid = (target) => {
+        const regExValidator = /^(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/ 
+        return regExValidator.test(target)
+      };
+      
       
       const detectCardType = ({target})=>{
        	let firstDigit = target.value.charAt(0)
@@ -189,8 +191,8 @@
       };
       
       const validateCardExpiryDate = ({target}) => {
-        if(expiryDateFormatIsValid({target})){
-        const entry = target.value[0].split("/");
+        if(expiryDateFormatIsValid(target.value)){
+        const entry = target.value.split("/");
         const mm = parseInt(entry[0]);
         let yy = parseInt(entry[1]);
         let d = new Date();
@@ -198,9 +200,8 @@
         let month = d.getMonth();
        	let inFuture = (((mm <= month) && (yy > year)) ||
                          ((mm > month) && (yy >= year)));
-        if( inFuture === true ){
-          return flagIfInvalid(target, Invalid)
-        }
+       	let expiryDateInputField = document.querySelector('div[data-cc-info]').querySelectorAll('input')[1]
+        return flagIfInvalid(expiryDateInputField, inFuture)
       }
       };
       
@@ -208,12 +209,12 @@
         let inputName = target.value.split(" ");
         let name = inputName[0];
         let surName = inputName[1];
-        if(name.length >= 3 && surName.length >= 3 ){
-          return flagIfInvalid();
-        };
+        let holdersNameField = document.querySelector('div[data-cc-info]').querySelectorAll('input')[0]
+        let validator = (name.length >= 3 && surName.length >= 3 )
+        return flagIfInvalid(holdersNameField, validator);
       };
       
-      const validateWithLuhu = (digits) => {
+      const validateWithLuhu = () => {
         let arrOfInputValue = [];
         let cardValue = [];
         let inputString;
@@ -233,8 +234,7 @@
         arrOfStringInput = inputString.split("")
         arrOfStringInput.forEach((input)=>{
           arrOfInputValue.push(parseInt(input))
-          console.log(arrOfInputValue)
-        });
+         });
         
         for(i = 1 ; i <= arrOfInputValue.length ; i++){
           if (i % 2 !== 0){
@@ -364,7 +364,6 @@
       
       const startApp = () => {
      	fetchBill()
-        validateWithLuhu()
       };
 
       startApp();
