@@ -146,16 +146,16 @@
    
       
       const formatAsMoney = (amount, buyerCountry)=>{
-        buyerCountry.toLocaleString();
         
         const getBuyersCountryInfo = (country)=> {
-          country.country === buyerCountry
+         return country.country == buyerCountry
+          
         }
         
         const countryInfo = countries.filter(getBuyersCountryInfo)
         
-        if (countryInfo.lenght === 0) {
-          return `USD${amount.toLocaleString()}`
+        if (countryInfo.length === 0) {
+          return `USD${amount}`
         }else{
           return `${countryInfo[0].currency}${amount.toLocaleString()}`
         }
@@ -174,12 +174,23 @@
       }
       
       const detectCardType = ({target})=>{
-        console.log({target})
+       	let firstDigit = target.value.charAt(0)
+        if( target.value[0] == 4 ){
+          document.querySelector('div[data-credit-card]').classList.remove('is-mastercard')
+          document.querySelector('div[data-credit-card]').classList.add('is-visa')
+          document.querySelector('img[data-card-type]').src = supportedCards.visa
+          return "is-visa"
+        }else if(target.value[0] == 5 ){
+          document.querySelector('div[data-credit-card]').classList.remove('is-visa')
+          document.querySelector('div[data-credit-card]').classList.add('is-mastercard')
+          document.querySelector('img[data-card-type]').src = supportedCards.mastercard
+          return "is-mastercard"
+        }
       };
       
       const validateCardExpiryDate = ({target}) => {
         if(expiryDateFormatIsValid({target})){
-        const entry = target[0].split("/");
+        const entry = target.value[0].split("/");
         const mm = parseInt(entry[0]);
         let yy = parseInt(entry[1]);
         let d = new Date();
@@ -194,7 +205,7 @@
       };
       
       const validateCardHolderName = ({target}) => {
-        let inputName = target.split(" ");
+        let inputName = target.value.split(" ");
         let name = inputName[0];
         let surName = inputName[1];
         if(name.length >= 2 && surName.length >= 2 ){
@@ -207,14 +218,16 @@
       };
       
       const uiCanInteract = ()=>{
-        const cardDigit = document.querySelector('div[data-cc-digits] input:first-				child');
+        const divCC = document.querySelector('div[data-cc-digits]');
+        const cardDigit = divCC.querySelectorAll('input')[0];
         cardDigit.addEventListener("blur", detectCardType);
         cardDigit.focus();
         
-        const holdersName = document.querySelector('div[data-cc-info] input:first-				child');
+        const divInfo = document.querySelector('div[data-cc-info]');
+        const holdersName = divInfo.querySelectorAll('input')[0];
         holdersName.addEventListener("blur", validateCardHolderName);
         
-        const cardExpiry = document.querySelector('div[data-cc-info] input:nth-					child(2)');
+        const cardExpiry = divInfo.querySelectorAll('input')[1];
         cardExpiry.addEventListener("blur", validateCardExpiryDate);
         
         const button = document.querySelector('button[data-pay-btn]');
@@ -225,11 +238,14 @@
         const [data] = results
         const {itemsInCart, buyerCountry} = data;
         appState.items = itemsInCart;
+        
         appState.country = buyerCountry;
+       
         appState.bill = itemsInCart.reduce((total, item)=>{
-          return total + (item.price * item.qty);
-        });
-        appState.billFormated = formatAsMoney(this.bill, this.country);
+            return total + (item.price * item.qty);
+        },0);
+       
+        appState.billFormated = formatAsMoney(appState.bill, appState.country);
         
         const cartTotalDisplay = document.querySelector('[data-bill]');
         cartTotalDisplay.textContent = appState.billFormated;
